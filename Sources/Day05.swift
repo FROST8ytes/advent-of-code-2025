@@ -67,4 +67,13 @@ struct Day05: AdventDay {
     }
     return count
   }
+
+  func part2() async throws -> Int {
+    let mergedRanges = merged(sections.ranges)
+    var total = 0
+    for range in mergedRanges {
+      total += range.end - range.start + 1
+    }
+    return total
+  }
 }
