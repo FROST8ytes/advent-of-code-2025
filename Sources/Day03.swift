@@ -1,23 +1,30 @@
 struct Day03: AdventDay {
   var data: String
 
-  private func maxPairValue(_ digits: [Int]) -> Int {
-    guard digits.count >= 2 else { return 0 }
+  private func bestNumber(_ digits: [Int], length: Int) -> Int {
+    guard digits.count >= length else { return 0 }
 
-    var suffixMax = Array(repeating: -1, count: digits.count + 1)
-    for i in stride(from: digits.count - 1, through: 0, by: -1) {
-      suffixMax[i] = max(digits[i], suffixMax[i + 1])
+    var toRemove = digits.count - length
+    var stack: [Int] = []
+
+    for (index, digit) in digits.enumerated() {
+      let remaining = digits.count - index - 1
+      while toRemove > 0,
+        let last = stack.last,
+        last < digit,
+        stack.count + remaining >= length
+      {
+        stack.removeLast()
+        toRemove -= 1
+      }
+      stack.append(digit)
     }
 
-    var best = 0
-    for i in 0..<(digits.count - 1) {
-      let tens = digits[i]
-      let ones = suffixMax[i + 1]
-      guard ones >= 0 else { continue }
-      best = max(best, tens * 10 + ones)
+    if stack.count > length {
+      stack.removeLast(stack.count - length)
     }
 
-    return best
+    return stack.reduce(0) { $0 * 10 + $1 }
   }
 
   func part1() async throws -> Int {
@@ -25,7 +32,18 @@ struct Day03: AdventDay {
 
     for line in data.split(whereSeparator: { $0.isNewline }) {
       let digits = line.compactMap { $0.wholeNumberValue }
-      total += maxPairValue(digits)
+      total += bestNumber(digits, length: 2)
+    }
+
+    return total
+  }
+
+  func part2() async throws -> Int {
+    var total = 0
+
+    for line in data.split(whereSeparator: { $0.isNewline }) {
+      let digits = line.compactMap { $0.wholeNumberValue }
+      total += bestNumber(digits, length: 12)
     }
 
     return total
