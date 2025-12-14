@@ -39,4 +39,30 @@ struct Day01: AdventDay {
 
     return zeroHits
   }
+
+  func part2() async throws -> Int {
+    var position = 50
+    var zeroHits = 0
+
+    for rotation in rotations {
+      let steps = rotation.steps
+      let firstHit = switch rotation.direction {
+      case .right:
+        position == 0 ? 100 : 100 - position
+      case .left:
+        position == 0 ? 100 : position
+      }
+
+      if steps >= firstHit {
+        zeroHits += 1 + (steps - firstHit) / 100
+      }
+
+      let offset = steps % 100
+      let signedOffset = rotation.direction == .left ? -offset : offset
+      position = (position + signedOffset) % 100
+      if position < 0 { position += 100 }
+    }
+
+    return zeroHits
+  }
 }
