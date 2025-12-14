@@ -1,5 +1,5 @@
 {
-  "originHash" : "369d170a8ec90afcf29dfc635e65ef622cddcb02350bae0ae55a5c428b10acdd",
+  "originHash" : "02ad8f3dbad58497feddb6c3d3e845f5e88554f51c1d369d6022bd4ce70291ae",
   "pins" : [
     {
       "identity" : "swift-algorithms",
@@ -42,14 +42,14 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-format.git",
       "state" : {
-        "revision" : "65f9da9aad84adb7e2028eb32ca95164aa590e3b",
-        "version" : "600.0.0"
+        "branch" : "main",
+        "revision" : "e3cca1fd45ed63951b2c361ffe6f709decb140ec"
       }
     },
     {
       "identity" : "swift-markdown",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-markdown.git",
+      "location" : "https://github.com/swiftlang/swift-markdown.git",
       "state" : {
         "revision" : "7d9a5ce307528578dfa777d505496bd5f544ad94",
         "version" : "0.7.3"
@@ -69,8 +69,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
-        "revision" : "0687f71944021d616d34d922343dcef086855920",
-        "version" : "600.0.1"
+        "branch" : "main",
+        "revision" : "ca0480be69f8193237a18cd52805d3ef3b61e95c"
+      }
+    },
+    {
+      "identity" : "swift-testing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-testing.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "1d3961a0b006c25bec5301a01f4ba4fbfa7253c6"
       }
     }
   ],

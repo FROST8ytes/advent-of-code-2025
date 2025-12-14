@@ -49,7 +49,7 @@ extension AdventDay {
 
   // Default implementation of `part2`, so there aren't interruptions before
   // working on `part1()`.
-  func part2() throws -> Answer {
+  func part2() async throws -> Answer {
     throw PartUnimplemented(day: day, part: 2)
   }
 

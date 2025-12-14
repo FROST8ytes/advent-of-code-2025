@@ -21,8 +21,11 @@ let package = Package(
       url: "https://github.com/apple/swift-argument-parser.git",
       .upToNextMajor(from: "1.5.0")),
     .package(
+      url: "https://github.com/apple/swift-testing.git",
+      branch: "main"),
+    .package(
       url: "https://github.com/swiftlang/swift-format.git",
-      .upToNextMajor(from: "600.0.0"))
+      branch: "main")
   ],
   targets: [
     .executableTarget(
@@ -32,7 +35,10 @@ let package = Package(
     ),
     .testTarget(
       name: "AdventOfCodeTests",
-      dependencies: ["AdventOfCode"] + dependencies
+      dependencies: [
+        "AdventOfCode",
+        .product(name: "Testing", package: "swift-testing")
+      ] + dependencies
     )
   ],
   swiftLanguageModes: [.v6]
