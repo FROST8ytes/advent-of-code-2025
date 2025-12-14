@@ -16,34 +16,43 @@ struct Day02: AdventDay {
     }
   }
 
-  private func repeatedNumbers(upTo maxValue: Int) -> [Int] {
-    var result: [Int] = []
-    var powerOfTen = 1
-
-    while true {
-      let halfMin = powerOfTen
-      let nextPower = powerOfTen * 10
-      let halfMax = nextPower - 1
-      let multiplier = nextPower
-
-      // If the smallest possible repeated number for this length exceeds the cap, stop.
-      if halfMin * multiplier + halfMin > maxValue {
-        break
+    private func repeatedNumbers(upTo maxValue: Int, minRepeats: Int = 2, maxRepeats: Int? = nil) -> [Int] {
+      let maxDigits = String(maxValue).count
+      // Precompute powers of 10 to avoid pow(Double).
+      var pow10: [Int] = [1]
+      for _ in 1...maxDigits {
+        pow10.append(pow10.last! * 10)
       }
 
-      for half in halfMin...halfMax {
-        let value = half * multiplier + half
-        if value > maxValue {
-          break
+      func repFactor(length: Int, repeats: Int) -> Int {
+        // (10^(length*repeats) - 1) / (10^length - 1)
+        let numerator = pow10[length * repeats] - 1
+        let denominator = pow10[length] - 1
+        return numerator / denominator
+      }
+
+      var result: Set<Int> = []
+      let maxBaseLength = maxDigits / minRepeats
+
+      for length in 1...maxBaseLength {
+        let baseStart = pow10[length - 1]
+        let baseEnd = pow10[length] - 1
+        let maxRepeatCount = min(maxDigits / length, maxRepeats ?? Int.max)
+
+        for repeatCount in minRepeats...maxRepeatCount {
+          let factor = repFactor(length: length, repeats: repeatCount)
+          for base in baseStart...baseEnd {
+            let value = base * factor
+            if value > maxValue {
+              break
+            }
+            result.insert(value)
+          }
         }
-        result.append(value)
       }
 
-      powerOfTen = nextPower
+      return Array(result)
     }
-
-    return result
-  }
 
   private func lowerBound(_ values: [Int], target: Int) -> Int {
     var low = 0
@@ -73,9 +82,9 @@ struct Day02: AdventDay {
     return low
   }
 
-  func part1() async throws -> Int {
-    let maxEnd = ranges.map(\.end).max() ?? 0
-    let invalids = repeatedNumbers(upTo: maxEnd).sorted()
+    func part1() async throws -> Int {
+      let maxEnd = ranges.map(\.end).max() ?? 0
+      let invalids = repeatedNumbers(upTo: maxEnd, minRepeats: 2, maxRepeats: 2).sorted()
 
     var prefix: [Int] = Array(repeating: 0, count: invalids.count + 1)
     for (index, value) in invalids.enumerated() {
@@ -93,4 +102,25 @@ struct Day02: AdventDay {
 
     return total
   }
+
+    func part2() async throws -> Int {
+      let maxEnd = ranges.map(\.end).max() ?? 0
+      let invalids = repeatedNumbers(upTo: maxEnd).sorted()
+
+      var prefix: [Int] = Array(repeating: 0, count: invalids.count + 1)
+      for (index, value) in invalids.enumerated() {
+        prefix[index + 1] = prefix[index] + value
+      }
+
+      var total = 0
+      for range in ranges {
+        let lower = lowerBound(invalids, target: range.start)
+        let upper = upperBound(invalids, target: range.end)
+        if lower < upper {
+          total += prefix[upper] - prefix[lower]
+        }
+      }
+
+      return total
+    }
 }
