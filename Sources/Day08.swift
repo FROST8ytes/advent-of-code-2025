@@ -1,6 +1,18 @@
 struct Day08: AdventDay {
   var data: String
 
+  private func parsePoints() -> [(Int, Int, Int)] {
+    data.split(whereSeparator: \.isNewline).compactMap { line in
+      let parts = line.split(separator: ",")
+      guard parts.count == 3,
+        let x = Int(parts[0]),
+        let y = Int(parts[1]),
+        let z = Int(parts[2])
+      else { return nil }
+      return (x, y, z)
+    }
+  }
+
   private struct DSU {
     var parent: [Int]
     var size: [Int]
@@ -32,15 +44,7 @@ struct Day08: AdventDay {
   }
 
   func part1() async throws -> Int {
-    let points: [(Int, Int, Int)] = data.split(whereSeparator: \.isNewline).compactMap { line in
-      let parts = line.split(separator: ",")
-      guard parts.count == 3,
-        let x = Int(parts[0]),
-        let y = Int(parts[1]),
-        let z = Int(parts[2])
-      else { return nil }
-      return (x, y, z)
-    }
+    let points = parsePoints()
 
     let n = points.count
     guard n >= 3 else { return n }
@@ -86,5 +90,44 @@ struct Day08: AdventDay {
 
     let topThree = sizes.sorted(by: >).prefix(3)
     return topThree.reduce(1, *)
+  }
+
+  func part2() async throws -> Int {
+    let points = parsePoints()
+    let n = points.count
+    guard n >= 2 else { return 0 }
+
+    var edges: [(Int, Int, Int)] = []
+    edges.reserveCapacity(n * (n - 1) / 2)
+    for i in 0..<n {
+      let (xi, yi, zi) = points[i]
+      for j in (i + 1)..<n {
+        let (xj, yj, zj) = points[j]
+        let dx = xi - xj
+        let dy = yi - yj
+        let dz = zi - zj
+        let dist2 = dx * dx + dy * dy + dz * dz
+        edges.append((dist2, i, j))
+      }
+    }
+
+    edges.sort { $0.0 < $1.0 }
+
+    var dsu = DSU(n)
+    var components = n
+
+    for (_, u, v) in edges {
+      let ru = dsu.find(u)
+      let rv = dsu.find(v)
+      if ru == rv { continue }
+      dsu.union(ru, rv)
+      components -= 1
+      if components == 1 {
+        let product = points[u].0 * points[v].0
+        return product
+      }
+    }
+
+    return 0
   }
 }
